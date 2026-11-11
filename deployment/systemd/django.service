@@ -1,0 +1,26 @@
+[Unit]
+Description=Django Application Gunicorn Service
+After=network.target
+
+[Service]
+User=djangoapp
+Group=djangoapp
+WorkingDirectory=/opt/django-deployment
+
+ExecStart=/opt/django-deployment/venv/bin/gunicorn \
+          --workers 3 \
+          --bind 127.0.0.1:8000 \
+          --access-logfile - \
+          --error-logfile - \
+          config.wsgi:application
+
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/django-deployment
+EnvironmentFile=/etc/django-deployment.env
+[Install]
+WantedBy=multi-user.target
